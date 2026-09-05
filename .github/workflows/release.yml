@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.version }} # 核心修改：确保构建的代码版本与发布版本一致
+          ref: ${{ github.event.inputs.version }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -47,4 +47,4 @@ jobs:
           make_latest: true
           files: dist.zip
         env:
-          GITHUB_TOKEN: *** secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
