@@ -1,0 +1,48 @@
+name: Frontend Release Builder
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v2.8.8)'
+        required: true
+        default: 'v2.8.8'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    name: Build and Publish Release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'yarn'
+
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build Project
+        run: yarn build
+
+      - name: Package Dist
+        run: |
+          sudo apt-get update && sudo apt-get install -y zip
+          zip -r dist.zip dist/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.version }}
+          name: ${{ github.event.inputs.version }}
+          body: |
+            Automated release for MoviePilot Frontend ${{ github.event.inputs.version }}.
+            Build artifacts included.
+          draft: false
+          prerelease: false
+          make_latest: true
+          files: dist.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
