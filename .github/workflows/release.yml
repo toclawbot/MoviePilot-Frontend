@@ -11,6 +11,10 @@ jobs:
   build-and-release:
     runs-on: ubuntu-latest
     name: Build and Publish Release
+    # 【新增】显式声明权限，允许创建 Release 和上传文件
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
